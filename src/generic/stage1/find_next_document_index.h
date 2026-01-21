@@ -43,11 +43,11 @@ simdjson_inline uint32_t internal_find_next_document_index_comma_separated(dom_p
   * complete document, therefore the last json buffer location is the end of the
   * batch.
   *
-  * In the case that allow_comma_separated is true, if no regular boundary, we
-  * will try another algorithm, slightly costlier, which looks for the last
-  * comma found at depth 0.
+  * In the case that parser.allow_comma_separated is true, if no regular boundary
+  * is found, we will try another algorithm, slightly costlier, which looks for
+  * the last comma found at depth 0.
   */
-simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &parser, stage1_mode partial, bool allow_comma_separated) {
+simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &parser, stage1_mode partial) {
   // Variant: do not count separately, just figure out depth
   uint32_t base = [&parser]() -> uint32_t {
     if(parser.n_structural_indexes == 0) { return 0; }
@@ -109,7 +109,7 @@ simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &par
     return 0;
   }();
 
-  if (allow_comma_separated) {
+  if (parser.allow_comma_separated) {
     return internal_find_next_document_index_comma_separated(parser, partial, base);
   }
   return base;
