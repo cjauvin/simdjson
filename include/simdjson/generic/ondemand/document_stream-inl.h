@@ -328,6 +328,7 @@ inline size_t document_stream::next_batch_start() const noexcept {
 inline error_code document_stream::run_stage1(ondemand::parser &p, size_t _batch_start) noexcept {
   // This code only updates the structural index in the parser, it does not update any json_iterator
   // instance.
+  p.implementation->allow_comma_separated = allow_comma_separated;
   size_t remaining = len - _batch_start;
   if (remaining <= batch_size) {
     return p.implementation->stage1(&buf[_batch_start], remaining, stage1_mode::streaming_final);

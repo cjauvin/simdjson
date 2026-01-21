@@ -301,7 +301,11 @@ simdjson_inline error_code json_structural_indexer::finish(dom_parser_implementa
       if (simdjson_unlikely(parser.n_structural_indexes == 0u)) { return CAPACITY; }
     }
     // We truncate the input to the end of the last complete document (or zero).
-    auto new_structural_indexes = find_next_document_index(parser);
+    auto new_structural_indexes = find_next_document_index(
+      parser,
+      partial,
+      parser.allow_comma_separated
+    );
     if (new_structural_indexes == 0 && parser.n_structural_indexes > 0) {
       if(parser.structural_indexes[0] == 0) {
         // If the buffer is partial and we started at index 0 but the document is
@@ -327,7 +331,11 @@ simdjson_inline error_code json_structural_indexer::finish(dom_parser_implementa
     // may not know where exactly the last document will be. Meanwhile the
     // document_stream instances allow people to know the JSON documents they are
     // parsing (see the iterator.source() method).
-    parser.n_structural_indexes = find_next_document_index(parser);
+    parser.n_structural_indexes = find_next_document_index(
+      parser,
+      partial,
+      parser.allow_comma_separated
+    );
     // We store the initial n_structural_indexes so that the client can see
     // whether we used truncation. If initial_n_structural_indexes == parser.n_structural_indexes,
     // then this will query parser.structural_indexes[parser.n_structural_indexes] which is len,

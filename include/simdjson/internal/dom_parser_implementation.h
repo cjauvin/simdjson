@@ -171,6 +171,8 @@ public:
   std::unique_ptr<uint32_t[]> structural_indexes{};
   /** Next structural index to parse */
   uint32_t next_structural_index{0};
+  /** Whether to treat top-level commas as document boundaries in streaming */
+  bool allow_comma_separated{false};
 
   /**
    * The largest document this parser can support without reallocating.
