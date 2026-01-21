@@ -44,8 +44,9 @@ simdjson_inline uint32_t internal_find_next_document_index_comma_separated(dom_p
   * batch.
   *
   * In the case that parser.allow_comma_separated is true, if no regular boundary
-  * is found, we will try another algorithm, slightly costlier, which looks for
-  * the last comma found at depth 0.
+  * is found, we will try another algorithm, which looks for the last comma found
+  * at depth 0. This is slightly costlier because it goes forward from the start
+  * of the batch, instead of backward.
   */
 simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &parser, stage1_mode partial) {
   // Variant: do not count separately, just figure out depth
@@ -118,9 +119,10 @@ simdjson_inline uint32_t find_next_document_index(dom_parser_implementation &par
 /**
  * Fallback for find_next_document_index that treats a top-level comma as a document boundary.
  *
- * It finds the last comma at depth 0, then checks whether the document that starts after it is
- * complete in this batch. If complete, we keep the full batch; if incomplete, we stop before
- * that trailing document so it can be reprocessed once more data arrives.
+ * Going forward from the start of the batch, it finds the last comma at depth 0, then checks
+ * whether the document that starts after it is complete in this batch. If complete, we keep
+ * the full batch; if incomplete, we stop before that trailing document so it can be
+ * reprocessed once more data arrives.
  */
 simdjson_inline uint32_t internal_find_next_document_index_comma_separated(dom_parser_implementation &parser, stage1_mode partial, uint32_t base) {
 
